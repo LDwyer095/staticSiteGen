@@ -1,1 +1,1 @@
-# StaticSiteGen
+# staticSiteGen
