@@ -1,4 +1,10 @@
-def test_parent_to_html_just_tag_and_children_one_layer(self):
+import unittest
+from parentnode import ParentNode
+from leafnode import LeafNode
+
+class TestParentNode(unittest.TestCase):
+
+    def test_to_html_just_tag_and_children_one_layer(self):
         node = ParentNode(
             "p",
             [
@@ -11,12 +17,20 @@ def test_parent_to_html_just_tag_and_children_one_layer(self):
 
         self.assertEqual(node.to_html(), 
             "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>")
-    
-    def test_to_html_with_children(self):
+        
+    def test_to_html_just_tag_and_children_two_layer(self):
         child_node = LeafNode("span", "child")
         parent_node = ParentNode("div", [child_node])
         self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
 
+    def test_to_html_just_tag_and_children_three_layer(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
 
     def test_to_html_just_tag_and_children_two_children(self):
         child1_node1= LeafNode("span", "child1")
@@ -32,29 +46,6 @@ def test_parent_to_html_just_tag_and_children_one_layer(self):
         self.assertEqual(parent_node.to_html(), 
             "<p><n1><span>child1</span><span>child2</span></n1><n2><span>child1</span><span>child2</span></n2></p>")
 
-    class ParentNode(HTMLNode):
-    
-    def __init__(self, tag, children = None, props = None):
-        super().__init__(tag, children, props)
-        self.children = children
 
-    def to_html(self):
-
-        if self.tag == None:
-            raise ValueError("to_html Tag in parent not given")
-        
-        if self.children == None:
-            raise ValueError("to_html Children in parent not given")
-
-        nodeString = f"<{self.tag}>"
-        
-        for child in self.children:
-            if child.children != None:
-                return f"<{self.tag}>{child.to_html()}</{self.tag}>"
-            else:
-                nodeString += (f"{child.to_html()}")
-                
-
-        nodeString += (f"</{self.tag}>")
-
-        return nodeString
+if __name__ == "__main__":
+    unittest.main()
